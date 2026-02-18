@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Pemilihan Calon BPD SUA</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to right, #74ebd5, #9face6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  background: white;
+  width: 420px;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+.calon {
+  text-align: left;
+  margin: 10px 0;
+}
+
+button {
+  padding: 12px 25px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 15px;
+  font-size: 16px;
+}
+
+button:hover {
+  background: #45a049;
+}
+
+.result {
+  margin-top: 25px;
+  text-align: left;
+  background: #f1f1f1;
+  padding: 15px;
+  border-radius: 10px;
+  display: none; /* HASIL DISEMBUNYIKAN */
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>🗳️ Pemilihan Calon BPD SUA</h2>
+
+<form id="pollForm">
+
+<div class="calon"><input type="radio" name="calon" value="Ruben"> Ruben</div>
+<div class="calon"><input type="radio" name="calon" value="Sumres"> Sumres</div>
+<div class="calon"><input type="radio" name="calon" value="Riando"> Riando</div>
+<div class="calon"><input type="radio" name="calon" value="Swing Voter"> Swing Voter</div>
+<div class="calon"><input type="radio" name="calon" value="Ananta"> Ananta</div>
+<div class="calon"><input type="radio" name="calon" value="Mangapoi"> Mangapoi</div>
+<div class="calon"><input type="radio" name="calon" value="Hulman"> Hulman</div>
+
+<button type="button" onclick="vote()">Kirim Suara</button>
+
+</form>
+
+<div class="result" id="hasilBox">
+<h3>📊 Hasil Sementara:</h3>
+<p id="hasil"></p>
+</div>
+
+</div>
+
+<script>
+
+let suara = {
+  Ruben: 0,
+  Sumres: 0,
+  Riando: 0,
+  "Swing Voter": 0,
+  Ananta: 0,
+  Mangapoi: 0,
+  Hulman: 0
+};
+
+function vote() {
+
+  let pilihan = document.querySelector('input[name="calon"]:checked');
+
+  if (!pilihan) {
+    alert("Silakan pilih calon terlebih dahulu!");
+    return;
+  }
+
+  suara[pilihan.value]++;
+
+  tampilkanHasil();
+}
+
+function tampilkanHasil() {
+
+  let teks = "";
+
+  for (let calon in suara) {
+    teks += calon + " : " + suara[calon] + " suara<br>";
+  }
+
+  document.getElementById("hasil").innerHTML = teks;
+
+  // TAMPILKAN HASIL SETELAH MEMILIH
+  document.getElementById("hasilBox").style.display = "block";
+}
+
+</script>
+
+</body>
+</html>
