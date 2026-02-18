@@ -1,177 +1,560 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pemilihan Suara</title>
 
   <style>
-    * {
-      box-sizing: border-box;
+    :root{
+      --bg1:#74ebd5;
+      --bg2:#9face6;
+      --glass: rgba(255,255,255,.78);
+      --glass2: rgba(255,255,255,.55);
+      --text:#0f172a;
+      --muted:#475569;
+      --line: rgba(15,23,42,.12);
+      --accent:#22c55e;
+      --accent2:#16a34a;
+      --shadow: 0 22px 70px rgba(2,6,23,.22);
+    }
+    body.dark{
+      --bg1:#0b1220;
+      --bg2:#172554;
+      --glass: rgba(15,23,42,.74);
+      --glass2: rgba(15,23,42,.55);
+      --text:#e2e8f0;
+      --muted:#94a3b8;
+      --line: rgba(226,232,240,.14);
+      --accent:#38bdf8;
+      --accent2:#0ea5e9;
+      --shadow: 0 22px 70px rgba(0,0,0,.45);
     }
 
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      min-height: 100vh;
-      background: linear-gradient(to right, #74ebd5, #9face6);
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
 
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(900px 650px at 10% 10%, rgba(255,255,255,.35), transparent 60%),
+        radial-gradient(900px 650px at 90% 30%, rgba(255,255,255,.22), transparent 55%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      overflow-x:hidden;
+      transition: .25s;
     }
 
-    .container {
-      background: white;
-      width: min(95%, 500px);
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-      text-align: center;
+    .wrap{ width: min(95vw, 820px); position:relative; }
+
+    .card{
+      background: linear-gradient(135deg, var(--glass), var(--glass2));
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      overflow:hidden;
+      position:relative;
+      z-index: 2;
     }
 
-    h2 {
-      margin-bottom: 20px;
+    .top{
+      padding: 16px 18px;
+      border-bottom: 1px solid rgba(255,255,255,.22);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
     }
 
-    .calon {
-      margin: 10px 0;
-      text-align: left;
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
     }
 
-    .calon label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px;
-      border-radius: 8px;
-      cursor: pointer;
-      border: 1px solid #eee;
+    .logo{
+      width:44px; height:44px;
+      border-radius: 14px;
+      display:grid;
+      place-items:center;
+      background: linear-gradient(135deg, var(--accent), rgba(99,102,241,.85));
+      border: 1px solid rgba(255,255,255,.35);
+      box-shadow: 0 14px 22px rgba(2,6,23,.18);
+      flex: 0 0 auto;
+      font-size: 20px;
     }
 
-    .calon label:hover {
-      background: #f5f5f5;
+    .title{ min-width:0; }
+    .title h1{
+      margin:0;
+      font-size: 18px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      line-height:1.1;
+    }
+    .title p{
+      margin:4px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
-    input[type="radio"] {
-      transform: scale(1.2);
-    }
-
-    button {
-      width: 100%;
-      padding: 14px;
-      background: #4CAF50;
+    .modeBtn{
+      border:0;
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor:pointer;
+      font-weight: 900;
       color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      margin-top: 15px;
-      font-size: 16px;
-      font-weight: bold;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      position: relative;
+      z-index: 10;
     }
 
-    button:hover {
-      background: #45a049;
+    .content{
+      padding: 16px 18px 18px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 14px;
+    }
+    @media (max-width: 760px){
+      .content{ grid-template-columns: 1fr; }
     }
 
-    .result {
-      margin-top: 20px;
-      text-align: left;
-      background: #f1f1f1;
-      padding: 15px;
-      border-radius: 10px;
-      display: none;
+    .panel{
+      background: rgba(255,255,255,.52);
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 18px;
+      overflow:hidden;
+    }
+    body.dark .panel{
+      background: rgba(2,6,23,.22);
+      border-color: rgba(226,232,240,.10);
+    }
+
+    .hd{
+      padding: 12px 12px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.20);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .hd h2{
+      margin:0;
+      font-size: 14px;
+      letter-spacing:.2px;
+    }
+    .hd small{
+      display:block;
+      margin-top:3px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .badge{
+      font-size:12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(255,255,255,.45);
+      white-space:nowrap;
+      align-self:center;
+    }
+    body.dark .badge{
+      background: rgba(2,6,23,.20);
+      border-color: rgba(226,232,240,.12);
+    }
+
+    .bd{ padding: 12px; }
+
+    .option{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.55);
+      cursor:pointer;
+      user-select:none;
+      margin-bottom: 10px;
+      transition: transform .12s ease, background .12s ease;
+    }
+    body.dark .option{ background: rgba(2,6,23,.18); }
+
+    .option:hover{ transform: translateY(-1px); background: rgba(255,255,255,.70); }
+    body.dark .option:hover{ background: rgba(2,6,23,.28); }
+
+    input[type="radio"]{
+      transform: scale(1.15);
+      accent-color: var(--accent);
+    }
+
+    .btn{
+      width:100%;
+      padding: 14px 14px;
+      border-radius: 14px;
+      border:0;
+      cursor:pointer;
+      font-weight: 900;
+      font-size: 14px;
+      position:relative;
+      z-index: 10;
+    }
+
+    .btnPrimary{
+      margin-top: 10px;
+      color: white;
+      background: linear-gradient(135deg, var(--accent), rgba(99,102,241,.85));
+      box-shadow: 0 14px 26px rgba(34,197,94,.18);
+    }
+
+    .btnGhost{
+      margin-top: 10px;
+      background: rgba(255,255,255,.62);
+      border: 1px solid var(--line);
+      color: var(--text);
+    }
+    body.dark .btnGhost{ background: rgba(2,6,23,.20); }
+
+    .toast{
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.60);
+      display:none;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    body.dark .toast{ background: rgba(2,6,23,.20); }
+
+    .stat{
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.55);
+      margin-bottom: 10px;
+    }
+    body.dark .stat{ background: rgba(2,6,23,.18); }
+
+    .row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .row span:last-child{ font-weight: 700; color: var(--muted); }
+
+    .bar{
+      height: 10px;
+      background: rgba(15,23,42,.12);
+      border-radius: 999px;
+      overflow:hidden;
+    }
+    body.dark .bar{ background: rgba(226,232,240,.10); }
+
+    .fill{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      background: linear-gradient(90deg, var(--accent), rgba(99,102,241,.85));
+      transition: width .45s ease;
+    }
+
+    .foot{
+      padding: 12px 18px 16px;
+      border-top: 1px solid rgba(255,255,255,.20);
+      display:flex;
+      gap:10px;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      font-size: 12px;
+      color: var(--muted);
+      background: rgba(255,255,255,.20);
+    }
+    body.dark .foot{ background: rgba(2,6,23,.12); }
+
+    /* Confetti (CSS only) */
+    .confetti{
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow:hidden;
+    }
+    .confetti i{
+      position:absolute;
+      top:-10%;
+      width: 10px;
+      height: 16px;
+      opacity: .95;
+      border-radius: 3px;
+      animation: fall 1.6s linear forwards;
+    }
+    @keyframes fall{
+      0%{ transform: translateY(-10vh) rotate(0deg); }
+      100%{ transform: translateY(110vh) rotate(540deg); }
     }
   </style>
 </head>
 
 <body>
+  <div class="confetti" id="confetti"></div>
 
-<div class="container">
+  <div class="wrap">
+    <div class="card">
+      <div class="top">
+        <div class="brand">
+          <div class="logo">🗳️</div>
+          <div class="title">
+            <h1>Pemilihan Suara</h1>
+            <p>Pilih 1 kandidat, lalu kirim suara.</p>
+          </div>
+        </div>
+        <button class="modeBtn" id="modeBtn">Mode</button>
+      </div>
 
-<h2>🗳️ Pemilihan Suara</h2>
+      <div class="content">
+        <div class="panel">
+          <div class="hd">
+            <div>
+              <h2>Kandidat</h2>
+              <small>Tap satu nama untuk memilih</small>
+            </div>
+            <div class="badge" id="totalBadge">Total: 0</div>
+          </div>
 
-<form id="pollForm">
+          <div class="bd">
+            <form id="form">
+              <label class="option"><input type="radio" name="calon" value="Ruben"> Ruben</label>
+              <label class="option"><input type="radio" name="calon" value="Sumres"> Sumres</label>
+              <label class="option"><input type="radio" name="calon" value="Riando"> Riando</label>
+              <label class="option"><input type="radio" name="calon" value="Swing Voter"> Swing Voter</label>
+              <label class="option"><input type="radio" name="calon" value="Ananta"> Ananta</label>
+              <label class="option"><input type="radio" name="calon" value="Mangapoi"> Mangapoi</label>
+              <label class="option"><input type="radio" name="calon" value="Hulman"> Hulman</label>
 
-<div class="calon">
-  <label><input type="radio" name="calon" value="Ruben"> Ruben</label>
-</div>
+              <button type="button" class="btn btnPrimary" id="voteBtn">Kirim Suara</button>
+              <button type="button" class="btn btnGhost" id="resetBtn">Reset (Demo)</button>
 
-<div class="calon">
-  <label><input type="radio" name="calon" value="Sumres"> Sumres</label>
-</div>
+              <div class="toast" id="toast"></div>
+            </form>
+          </div>
+        </div>
 
-<div class="calon">
-  <label><input type="radio" name="calon" value="Riando"> Riando</label>
-</div>
+        <div class="panel">
+          <div class="hd">
+            <div>
+              <h2>Hasil Sementara</h2>
+              <small>Progress bar otomatis</small>
+            </div>
+            <div class="badge" id="leaderBadge">Leader: -</div>
+          </div>
 
-<div class="calon">
-  <label><input type="radio" name="calon" value="Swing Voter"> Swing Voter</label>
-</div>
+          <div class="bd" id="hasilBox"></div>
+        </div>
+      </div>
 
-<div class="calon">
-  <label><input type="radio" name="calon" value="Ananta"> Ananta</label>
-</div>
+      <div class="foot">
+        <div>Jika di HP belum berubah, buka Incognito atau clear cache.</div>
+        <div>Demo: hasil tersimpan di perangkat (localStorage).</div>
+      </div>
+    </div>
+  </div>
 
-<div class="calon">
-  <label><input type="radio" name="calon" value="Mangapoi"> Mangapoi</label>
-</div>
+  <script>
+  (function(){
+    var defaultSuara = {
+      "Ruben":0,
+      "Sumres":0,
+      "Riando":0,
+      "Swing Voter":0,
+      "Ananta":0,
+      "Mangapoi":0,
+      "Hulman":0
+    };
 
-<div class="calon">
-  <label><input type="radio" name="calon" value="Hulman"> Hulman</label>
-</div>
+    // ambil data dari localStorage (kalau ada)
+    var suara;
+    try{
+      suara = JSON.parse(localStorage.getItem("suaraData") || "null");
+    }catch(e){
+      suara = null;
+    }
+    if(!suara) suara = JSON.parse(JSON.stringify(defaultSuara));
 
-<button type="button" onclick="vote()">Kirim Suara</button>
+    // 1 device 1 vote
+    var sudahVote = (localStorage.getItem("sudahVote") === "true");
 
-</form>
+    // elements
+    var modeBtn = document.getElementById("modeBtn");
+    var voteBtn = document.getElementById("voteBtn");
+    var resetBtn = document.getElementById("resetBtn");
+    var toast = document.getElementById("toast");
+    var hasilBox = document.getElementById("hasilBox");
+    var totalBadge = document.getElementById("totalBadge");
+    var leaderBadge = document.getElementById("leaderBadge");
+    var form = document.getElementById("form");
+    var confetti = document.getElementById("confetti");
 
-<div class="result" id="hasilBox">
-<h3>📊 Hasil Sementara:</h3>
-<p id="hasil"></p>
-</div>
+    function totalSuara(){
+      var sum = 0;
+      for(var k in suara){ sum += suara[k]; }
+      return sum;
+    }
 
-</div>
+    function leader(){
+      var topName = "-";
+      var topVal = 0;
+      var isTie = false;
 
-<script>
+      for(var k in suara){
+        if(suara[k] > topVal){
+          topVal = suara[k];
+          topName = k;
+          isTie = false;
+        }else if(suara[k] === topVal && topVal !== 0){
+          isTie = true;
+        }
+      }
+      if(topVal === 0) return "-";
+      if(isTie) return "Seri";
+      return topName;
+    }
 
-let suara = {
-  Ruben: 0,
-  Sumres: 0,
-  Riando: 0,
-  "Swing Voter": 0,
-  Ananta: 0,
-  Mangapoi: 0,
-  Hulman: 0
-};
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.style.display = "block";
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(function(){
+        toast.style.display = "none";
+      }, 2200);
+    }
 
-function vote() {
+    function save(){
+      localStorage.setItem("suaraData", JSON.stringify(suara));
+    }
 
-  let pilihan = document.querySelector('input[name="calon"]:checked');
+    function render(){
+      var total = totalSuara();
+      totalBadge.textContent = "Total: " + total;
+      leaderBadge.textContent = "Leader: " + leader();
 
-  if (!pilihan) {
-    alert("Silakan pilih calon terlebih dahulu!");
-    return;
-  }
+      // urutkan manual
+      var names = [];
+      for(var k in suara){ names.push(k); }
+      names.sort(function(a,b){ return suara[b] - suara[a]; });
 
-  suara[pilihan.value]++;
+      hasilBox.innerHTML = "";
+      for(var i=0;i<names.length;i++){
+        var nama = names[i];
+        var jumlah = suara[nama];
+        var pct = (total === 0) ? 0 : Math.round((jumlah/total)*100);
 
-  tampilkanHasil();
-}
+        var stat = document.createElement("div");
+        stat.className = "stat";
 
-function tampilkanHasil() {
+        var row = document.createElement("div");
+        row.className = "row";
 
-  let teks = "";
+        var left = document.createElement("span");
+        left.textContent = nama;
 
-  for (let calon in suara) {
-    teks += calon + " : " + suara[calon] + " suara<br>";
-  }
+        var right = document.createElement("span");
+        right.textContent = jumlah + " suara • " + pct + "%";
 
-  document.getElementById("hasil").innerHTML = teks;
-  document.getElementById("hasilBox").style.display = "block";
-}
+        row.appendChild(left);
+        row.appendChild(right);
 
-</script>
+        var bar = document.createElement("div");
+        bar.className = "bar";
 
+        var fill = document.createElement("div");
+        fill.className = "fill";
+        fill.style.width = pct + "%";
+
+        bar.appendChild(fill);
+
+        stat.appendChild(row);
+        stat.appendChild(bar);
+
+        hasilBox.appendChild(stat);
+      }
+    }
+
+    function fireConfetti(){
+      // buat 45 partikel
+      confetti.innerHTML = "";
+      var colors = ["#22c55e","#38bdf8","#a78bfa","#f59e0b","#ef4444"];
+      for(var i=0;i<45;i++){
+        var p = document.createElement("i");
+        p.style.left = Math.floor(Math.random()*100) + "%";
+        p.style.background = colors[Math.floor(Math.random()*colors.length)];
+        p.style.animationDelay = (Math.random()*0.15) + "s";
+        p.style.transform = "rotate(" + Math.floor(Math.random()*360) + "deg)";
+        confetti.appendChild(p);
+      }
+      setTimeout(function(){ confetti.innerHTML = ""; }, 1800);
+    }
+
+    modeBtn.addEventListener("click", function(){
+      document.body.classList.toggle("dark");
+    });
+
+    voteBtn.addEventListener("click", function(){
+      if(sudahVote){
+        showToast("Perangkat ini sudah pernah vote.");
+        return;
+      }
+
+      var pilihan = document.querySelector("input[name='calon']:checked");
+      if(!pilihan){
+        showToast("Pilih kandidat dulu.");
+        return;
+      }
+
+      var nama = pilihan.value;
+      suara[nama] = (suara[nama] || 0) + 1;
+
+      save();
+      localStorage.setItem("sudahVote", "true");
+      sudahVote = true;
+
+      render();
+      fireConfetti();
+      form.reset();
+      showToast("Suara terkirim untuk: " + nama);
+    });
+
+    resetBtn.addEventListener("click", function(){
+      // reset data demo
+      suara = JSON.parse(JSON.stringify(defaultSuara));
+      localStorage.setItem("suaraData", JSON.stringify(suara));
+      localStorage.removeItem("sudahVote");
+      sudahVote = false;
+      render();
+      showToast("Reset selesai (demo).");
+    });
+
+    // init
+    render();
+  })();
+  </script>
 </body>
 </html>
