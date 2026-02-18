@@ -32,25 +32,40 @@
     }
 
     *{ box-sizing:border-box; }
-    html,body{ height:100%; }
+    html, body { height: 100%; margin: 0; }
 
+    /* ✅ MOBILE SAFE VIEWPORT */
     body{
-      margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color: var(--text);
       background:
         radial-gradient(900px 650px at 10% 10%, rgba(255,255,255,.35), transparent 60%),
         radial-gradient(900px 650px at 90% 30%, rgba(255,255,255,.22), transparent 55%),
         linear-gradient(135deg, var(--bg1), var(--bg2));
+
+      /* jangan pakai height:100vh; */
+      min-height: 100vh;   /* fallback */
+      min-height: 100svh;  /* iOS/Android stable viewport */
+      min-height: 100dvh;  /* dynamic viewport modern */
+
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:18px;
-      overflow-x:hidden;
+
+      /* ✅ kasih ruang atas bawah biar ga ketutup address bar */
+      padding: 28px 16px;
+
+      /* ✅ kalau layar kecil, boleh scroll */
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       transition: .25s;
     }
 
-    .wrap{ width: min(95vw, 820px); position:relative; }
+    .wrap{
+      width: min(95vw, 820px);
+      /* ✅ mencegah “kepotong”, karena body bisa scroll */
+      margin: auto;
+    }
 
     .card{
       background: linear-gradient(135deg, var(--glass), var(--glass2));
@@ -61,7 +76,6 @@
       -webkit-backdrop-filter: blur(10px);
       overflow:hidden;
       position:relative;
-      z-index: 2;
     }
 
     .top{
@@ -118,8 +132,7 @@
       font-weight: 900;
       color: white;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
-      position: relative;
-      z-index: 10;
+      white-space: nowrap;
     }
 
     .content{
@@ -210,8 +223,6 @@
       cursor:pointer;
       font-weight: 900;
       font-size: 14px;
-      position:relative;
-      z-index: 10;
     }
 
     .btnPrimary{
@@ -289,34 +300,10 @@
       background: rgba(255,255,255,.20);
     }
     body.dark .foot{ background: rgba(2,6,23,.12); }
-
-    /* Confetti (CSS only) */
-    .confetti{
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1;
-      overflow:hidden;
-    }
-    .confetti i{
-      position:absolute;
-      top:-10%;
-      width: 10px;
-      height: 16px;
-      opacity: .95;
-      border-radius: 3px;
-      animation: fall 1.6s linear forwards;
-    }
-    @keyframes fall{
-      0%{ transform: translateY(-10vh) rotate(0deg); }
-      100%{ transform: translateY(110vh) rotate(540deg); }
-    }
   </style>
 </head>
 
 <body>
-  <div class="confetti" id="confetti"></div>
-
   <div class="wrap">
     <div class="card">
       <div class="top">
@@ -372,8 +359,8 @@
       </div>
 
       <div class="foot">
-        <div>Jika di HP belum berubah, buka Incognito atau clear cache.</div>
-        <div>Demo: hasil tersimpan di perangkat (localStorage).</div>
+        <div>Mobile-safe: tidak akan kepotong, dan bisa scroll jika layar kecil.</div>
+        <div>Demo: tersimpan di perangkat (localStorage).</div>
       </div>
     </div>
   </div>
@@ -381,16 +368,9 @@
   <script>
   (function(){
     var defaultSuara = {
-      "Ruben":0,
-      "Sumres":0,
-      "Riando":0,
-      "Swing Voter":0,
-      "Ananta":0,
-      "Mangapoi":0,
-      "Hulman":0
+      "Ruben":0, "Sumres":0, "Riando":0, "Swing Voter":0, "Ananta":0, "Mangapoi":0, "Hulman":0
     };
 
-    // ambil data dari localStorage (kalau ada)
     var suara;
     try{
       suara = JSON.parse(localStorage.getItem("suaraData") || "null");
@@ -399,10 +379,8 @@
     }
     if(!suara) suara = JSON.parse(JSON.stringify(defaultSuara));
 
-    // 1 device 1 vote
     var sudahVote = (localStorage.getItem("sudahVote") === "true");
 
-    // elements
     var modeBtn = document.getElementById("modeBtn");
     var voteBtn = document.getElementById("voteBtn");
     var resetBtn = document.getElementById("resetBtn");
@@ -411,27 +389,18 @@
     var totalBadge = document.getElementById("totalBadge");
     var leaderBadge = document.getElementById("leaderBadge");
     var form = document.getElementById("form");
-    var confetti = document.getElementById("confetti");
 
     function totalSuara(){
-      var sum = 0;
-      for(var k in suara){ sum += suara[k]; }
-      return sum;
+      var sum = 0; for(var k in suara){ sum += suara[k]; } return sum;
     }
 
     function leader(){
       var topName = "-";
       var topVal = 0;
       var isTie = false;
-
       for(var k in suara){
-        if(suara[k] > topVal){
-          topVal = suara[k];
-          topName = k;
-          isTie = false;
-        }else if(suara[k] === topVal && topVal !== 0){
-          isTie = true;
-        }
+        if(suara[k] > topVal){ topVal = suara[k]; topName = k; isTie = false; }
+        else if(suara[k] === topVal && topVal !== 0){ isTie = true; }
       }
       if(topVal === 0) return "-";
       if(isTie) return "Seri";
@@ -442,9 +411,7 @@
       toast.textContent = msg;
       toast.style.display = "block";
       clearTimeout(window.__toastTimer);
-      window.__toastTimer = setTimeout(function(){
-        toast.style.display = "none";
-      }, 2200);
+      window.__toastTimer = setTimeout(function(){ toast.style.display = "none"; }, 2200);
     }
 
     function save(){
@@ -456,7 +423,6 @@
       totalBadge.textContent = "Total: " + total;
       leaderBadge.textContent = "Leader: " + leader();
 
-      // urutkan manual
       var names = [];
       for(var k in suara){ names.push(k); }
       names.sort(function(a,b){ return suara[b] - suara[a]; });
@@ -498,36 +464,14 @@
       }
     }
 
-    function fireConfetti(){
-      // buat 45 partikel
-      confetti.innerHTML = "";
-      var colors = ["#22c55e","#38bdf8","#a78bfa","#f59e0b","#ef4444"];
-      for(var i=0;i<45;i++){
-        var p = document.createElement("i");
-        p.style.left = Math.floor(Math.random()*100) + "%";
-        p.style.background = colors[Math.floor(Math.random()*colors.length)];
-        p.style.animationDelay = (Math.random()*0.15) + "s";
-        p.style.transform = "rotate(" + Math.floor(Math.random()*360) + "deg)";
-        confetti.appendChild(p);
-      }
-      setTimeout(function(){ confetti.innerHTML = ""; }, 1800);
-    }
-
     modeBtn.addEventListener("click", function(){
       document.body.classList.toggle("dark");
     });
 
     voteBtn.addEventListener("click", function(){
-      if(sudahVote){
-        showToast("Perangkat ini sudah pernah vote.");
-        return;
-      }
-
+      if(sudahVote){ showToast("Perangkat ini sudah pernah vote."); return; }
       var pilihan = document.querySelector("input[name='calon']:checked");
-      if(!pilihan){
-        showToast("Pilih kandidat dulu.");
-        return;
-      }
+      if(!pilihan){ showToast("Pilih kandidat dulu."); return; }
 
       var nama = pilihan.value;
       suara[nama] = (suara[nama] || 0) + 1;
@@ -537,13 +481,11 @@
       sudahVote = true;
 
       render();
-      fireConfetti();
       form.reset();
       showToast("Suara terkirim untuk: " + nama);
     });
 
     resetBtn.addEventListener("click", function(){
-      // reset data demo
       suara = JSON.parse(JSON.stringify(defaultSuara));
       localStorage.setItem("suaraData", JSON.stringify(suara));
       localStorage.removeItem("sudahVote");
@@ -552,7 +494,6 @@
       showToast("Reset selesai (demo).");
     });
 
-    // init
     render();
   })();
   </script>
